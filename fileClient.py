@@ -2,7 +2,7 @@ import socket
 import os
 
 def Main():
-    host = '127.0.0.1'
+    host = input("Enter server's IP address: ")
     port = 5000
 
     s = socket.socket()
@@ -15,7 +15,7 @@ def Main():
         data = data.decode('UTF-8')
         if data[:6]=="EXISTS":
             fileSize = data[6:]
-            message = input('File exists, '+fileSize+' B, download? (Y/N)-> ')
+            message = input('File exists,'+fileSize+' B, download? (Y/N)-> ')
             if message == 'Y':
                 s.send(bytes('OK','UTF-8'))
                 newFileName = 'new_'+fileName
