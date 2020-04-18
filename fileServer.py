@@ -3,24 +3,25 @@ import threading
 import os
 
 def retrFile(name, sock):
-    filename = sock.recv(1024)
-    #print(filename.decode('UTF-8'))
-    if os.path.isfile(filename.decode('UTF-8')):
-        sock.send(bytes("EXISTS "+str(os.path.getsize(filename)),'UTF-8'))
+    fileNameRecv = sock.recv(1024)
+    curDir=os.path.dirname(os.path.abspath(__file__))
+    fileLocation = curDir+'/'+fileNameRecv.decode('UTF-8')
+    if os.path.isfile(fileLocation):
+        sock.send(bytes("EXISTS "+str(os.path.getsize(fileLocation)),'UTF-8'))
         userResponse = sock.recv(1024)
         userResponse = userResponse.decode('UTF-8') 
         if userResponse[:2]=='OK':
-            with open(filename,'rb') as f:
+            with open(fileLocation,'rb') as f:
                 bytesToSend = f.read(1024)
                 sock.send(bytesToSend)
                 while bytesToSend != "":
                     bytesToSend = f.read(1024)
                     sock.send(bytesToSend)
     else:
-        sock.send("ERR ")
+        sock.send(bytes("ERR ",'UTF-8'))
     sock.close()
 def Main():
-    host = "127.0.0.1"
+    host = "0.0.0.0"
     port = 5000
     
     s = socket.socket()
